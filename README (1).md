@@ -14,14 +14,14 @@ The output is a full suite of executive-ready deliverables: SQL-driven data extr
 
 | Tool | Purpose |
 |---|---|
-| MySQL / PostgreSQL | Database storage and Open SQL-compatible data extraction |
+| MySQL | Database storage and Open SQL-compatible data extraction |
 | Python | Data pipeline automation and report generation |
 | pandas | Data manipulation, cleaning, and transformation |
 | matplotlib | Charts and business visualisations |
 | seaborn | Statistical plots and heatmaps |
 | Jupyter Notebook | Interactive development and documentation environment |
 | mysql-connector-python | Python ↔ MySQL integration bridge |
-| Excel (openpyxl) | Structured report output for stakeholder delivery |
+| Excel | Structured report output for stakeholder delivery |
 
 ---
 

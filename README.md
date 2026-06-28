@@ -1,14 +1,89 @@
-# 🏢 Enterprise Data Analysis & ERP Module Simulation
+# 🚀 GTM Business Intelligence Platform
+### AI-Powered Go-To-Market Analytics | Enterprise E-Commerce Dataset (100K+ Orders)
 
-## 📌 Project Overview
+[![Python](https://img.shields.io/badge/Python-3.10+-3776AB?logo=python&logoColor=white)](https://python.org)
+[![Streamlit](https://img.shields.io/badge/Streamlit-Dashboard-FF4B4B?logo=streamlit&logoColor=white)](https://streamlit.io)
+[![Claude API](https://img.shields.io/badge/Claude-AI%20Insights-7C6AF7?logo=anthropic&logoColor=white)](https://anthropic.com)
+[![MySQL](https://img.shields.io/badge/MySQL-Database-4479A1?logo=mysql&logoColor=white)](https://mysql.com)
 
-A business was sitting on 100,000+ orders spread across 7 separate tables — with no visibility into revenue drivers, customer behaviour, or operational performance across its Sales, Inventory, and Customer modules.
+---
 
-This project builds an **end-to-end ERP data analysis pipeline** — mirroring the structure of SAP SD (Sales & Distribution), MM (Materials Management), CRM (Customer Relationship Management), and FI (Financial Accounting) modules — using Open SQL-compatible queries (MySQL), Python automation, and structured business reporting.
+## 📌 Overview
 
-The pipeline covers two stages:
-- **Stage 1** (`csv_to_mysql.ipynb`) — automated CSV ingestion into MySQL with dynamic schema creation, NULL handling, and data type inference
-- **Stage 2** (`ecommerce_sql_python.ipynb`) — 12 structured SQL queries across all ERP modules, 5 business report visualisations, and executive-ready insights
+This project builds a **GTM Business Intelligence Platform** — the kind of analytics infrastructure that supports Go-To-Market leadership teams at enterprise software companies. It combines a 100K+ order e-commerce dataset with an AI insight layer and conversational query engine to demonstrate the full BI stack.
+
+**Three capabilities in one project:**
+
+| Capability | What it does | JD Alignment |
+|---|---|---|
+| 📊 GTM KPI Dashboard | Revenue growth, customer retention, seller productivity, regional concentration | "Build robust metrics" |
+| 🤖 LLM Insight Layer | Claude API generates executive-ready briefings from live data | "AI-powered quantitative insights" |
+| 💬 Natural Language → SQL | Ask business questions in plain English → instant SQL + results | "Conversational intelligence tools" |
+
+---
+
+## 🎯 GTM KPIs Tracked
+
+### Revenue KPIs
+- **Month-over-Month Revenue Growth Rate** — trend line across 24 months
+- **Year-over-Year Revenue Growth** — 2017 vs 2018 comparison
+- **Category Revenue Concentration** — top 10 product categories by share
+- **Cumulative Revenue Growth** — pipeline-style cumulative tracking
+
+### Customer KPIs
+- **Customer Retention Rate** — returning vs one-time buyer ratio
+- **Churn Rate** — inverse of retention; early warning signal
+- **New vs Returning Customer Trend** — monthly stacked view
+- **Regional Customer Concentration** — top states by unique buyers
+
+### Seller / Productivity KPIs
+- **Seller Revenue Ranking** — DENSE_RANK() across all sellers
+- **Seller Productivity Tiers** — High / Mid / Low based on revenue percentiles
+- **Average Order Value by Seller** — productivity efficiency metric
+- **Regional Revenue Penetration** — state-level revenue share
+
+---
+
+## 🤖 AI Features
+
+### 1. LLM Insight Layer (Claude API)
+After each KPI block, live data is passed to Claude to generate a structured executive briefing:
+- 3 key insight bullets
+- 1 risk flag
+- 1 recommended GTM action
+
+**Example prompt pattern:**
+```
+"You are a Senior GTM BI Analyst preparing a briefing for the VP of Sales.
+Based on this data: [live KPI summary], generate a concise executive insight..."
+```
+
+### 2. Natural Language → SQL Engine
+Type any business question in plain English — Claude converts it to MySQL and executes it against the database. No SQL knowledge required.
+
+**Example queries:**
+```
+"Show me total revenue by customer state, top 5"
+→ SELECT c.customer_state, ROUND(SUM(oi.price+oi.freight_value),2) AS revenue ...
+
+"Who are the top 5 sellers by revenue?"
+→ SELECT oi.seller_id, ROUND(SUM(oi.price+oi.freight_value),2) AS revenue ...
+
+"What percentage of orders use credit card?"
+→ SELECT payment_type, COUNT(*)*100.0/SUM(COUNT(*)) OVER() AS pct ...
+```
+
+This is the same principle behind **ThoughtSpot's SearchIQ** — built from scratch to demonstrate the underlying concept.
+
+### 3. Prompt Engineering
+System prompts used in this project are documented below — each is structured for a specific GTM use case:
+
+| Prompt | Purpose | Output format |
+|---|---|---|
+| Revenue briefing | VP Sales weekly update | 3 bullets + risk + action |
+| Retention alert | Customer Success VP | Diagnosis + root causes + interventions |
+| Seller productivity | Sales Ops Head | Tier summary + warning + coaching tip |
+| NL→SQL conversion | Any user | Raw MySQL query |
 
 ---
 
@@ -16,182 +91,101 @@ The pipeline covers two stages:
 
 | Tool | Purpose |
 |---|---|
-| MySQL | Database storage and Open SQL-compatible data extraction |
-| Python | Data pipeline automation, ingestion, and report generation |
-| pandas | Data manipulation, cleaning, NULL handling, and transformation |
-| matplotlib | Business report visualisations (line, bar, area, pie charts) |
-| seaborn | Statistical plots and order volume heatmaps |
-| Jupyter Notebook | Interactive development and technical documentation environment |
-| mysql-connector-python | Python ↔ MySQL integration bridge |
+| Python | Data pipeline, analysis, API integration |
+| MySQL | Database storage, Open SQL queries |
+| pandas | Data manipulation and transformation |
+| Claude API (Anthropic) | LLM insight generation, NL→SQL |
+| Streamlit | Interactive BI dashboard |
+| matplotlib / seaborn | Data visualisations |
+| Cursor.ai | AI-assisted code development |
 
 ---
 
-## 🗂 Dataset — ERP Module Mapping
+## 🗂 Project Structure
 
-**Brazilian Ecommerce Dataset** — 7 interconnected tables, 100,000+ records
-
-Each table maps to a functional SAP ERP module — the same data structures an ABAP developer writes SELECT queries against:
-
-| Table | Rows | SAP Module Equivalent | Description |
-|---|---|---|---|
-| customers | ~100K | SAP CRM — Customer Master | Customer IDs, cities, states |
-| orders | ~100K | SAP SD — Sales Orders | Order timestamps, status, lifecycle |
-| order_items | ~115K | SAP SD — Line Items / SAP MM — Inventory | Products, sellers, prices per line |
-| products | ~33K | SAP MM — Material Master | Category, dimensions, attributes |
-| payments | ~104K | SAP FI — Financial Accounting | Payment type, value, installments |
-| sellers | ~3K | SAP SD — Partner Functions | Seller location and revenue performance |
-| geolocation | ~1M | SAP Basis — Regional Master Data | Zip codes, coordinates |
-
----
-
-## ⚙️ Stage 1 — Data Ingestion Pipeline (`csv_to_mysql.ipynb`)
-
-Automated ingestion of all 7 CSV files into MySQL with:
-- Dynamic `CREATE TABLE` generation using pandas dtype inference (`INT`, `FLOAT`, `DATETIME`, `TEXT`)
-- Automatic NULL handling — `NaN` replaced with SQL `NULL` before insertion
-- Column name sanitisation — spaces, hyphens, and dots replaced with underscores
-- Per-file transaction commits for data integrity
-- Iterative `INSERT` with parameterised queries to prevent SQL injection
-
-This mirrors the data loading and preprocessing work performed before ABAP report development — ensuring clean, structured data in the database before any SELECT queries are written.
-
----
-
-## 🔍 Stage 2 — ERP Module Analysis (`ecommerce_sql_python.ipynb`)
-
-All SQL queries use Open SQL-compatible syntax (MySQL), following the same structured data extraction logic used in SAP ABAP report development. Every query uses `JOIN`, aggregation, or window functions across multiple tables — equivalent to cross-module reporting in SAP.
-
-### Module 1 — Sales & Revenue Reporting (SAP SD equivalent)
-> Structured revenue extraction — mirrors SD module report queries
-
-| # | Query | SQL Technique |
-|---|---|---|
-| Q1 | Total sales per product category | Multi-table JOIN + GROUP BY + SUM |
-| Q5 | Revenue percentage per product category | Subquery + percentage calculation |
-| Q6 | Seller revenue ranked | Window function: DENSE_RANK() OVER |
-| Q8 | Cumulative sales per month per year | Window function: SUM() OVER |
-| Q9 | Year-over-year growth rate | CTE + LAG() window function |
-
-### Module 2 — Customer Analytics (SAP CRM equivalent)
-> Customer master data queries and retention reporting
-
-| # | Query | SQL Technique |
-|---|---|---|
-| Q2 | Customer count by state | GROUP BY + COUNT + visualisation |
-| Q7 | Moving average of order values per customer | Window function: AVG() OVER with ROWS BETWEEN |
-| Q10 | Customer retention rate (6-month window) | Double CTE + DATE_ADD + LEFT JOIN |
-| Q11 | Top 3 customers by spend per year | DENSE_RANK() OVER PARTITION BY year |
-
-### Module 3 — Operations & Order Management (SAP MM/FI equivalent)
-> Order processing and payment behaviour reporting
-
-| # | Query | SQL Technique |
-|---|---|---|
-| Q3 | Percentage of orders paid in installments | CASE WHEN + conditional aggregation |
-| Q4 | Order volume per month in 2018 | YEAR/MONTHNAME filters + seaborn barplot |
-
----
-
-## 📊 Business Report Visualisations
-
-5 report-style charts produced as executive deliverables — equivalent to SAP ABAP Form and Report output:
-
-| # | Report | Chart Type | Key Finding |
-|---|---|---|---|
-| V1 | Monthly Revenue Trend (2016–2018) | Line Chart | Consistent growth; peak in late 2017 |
-| V2 | Order Volume Heatmap by Month & Year | Heatmap | Mid-year months show peak demand |
-| V3 | Cumulative Revenue Growth Over Time | Area Chart (fill_between) | Crossed 16M BRL by mid-2018 |
-| V4 | Top 10 Product Categories by Revenue | Horizontal Bar | Bed Table Bath leads at 10.7% of revenue |
-| V5 | Payment Type Distribution | Pie Chart | ~74% of transactions via credit card |
-
----
-
-## 📈 Key Business Insights
-
-- **Bed Table Bath** is the top revenue category — contributing **10.7%** of total revenue *(SD module finding)*
-- **99.99%** of orders involve installment payments — critical configuration input for FI module *(FI module finding)*
-- Revenue grew **~20% year-over-year** from 2017 to 2018 — positive SD KPI trend *(SD module finding)*
-- **Customer retention is critically low** — majority of customers are one-time buyers, a key CRM risk flag *(CRM module finding)*
-- **São Paulo** has the highest customer concentration of any state *(CRM + MM regional planning)*
-- **Mid-year months (May–August)** consistently show the highest order volumes *(MM demand planning)*
-
----
-
-## 💡 ABAP Skills Demonstrated
-
-This project directly mirrors the core technical responsibilities of a Junior SAP ABAP Developer:
-
-| ABAP Responsibility | Demonstrated In This Project |
-|---|---|
-| Writing Open SQL SELECT queries | 12 structured queries using JOIN, GROUP BY, CTEs, window functions |
-| Developing data extraction reports | Full SD / CRM / MM / FI reporting suite |
-| Working with SAP module data structures | Explicit module mapping across all 7 tables |
-| Debugging and troubleshooting | NaN debugging in ingestion pipeline; iterative query refinement |
-| Data type handling | Dynamic dtype inference: INT / FLOAT / DATETIME / TEXT |
-| Preparing technical documentation | Structured README, query reference docs, chart reference docs |
-| Supporting cross-module integration | Cross-table JOINs bridging customer, order, payment, product data |
-| Following coding standards | Consistent query structure, naming conventions, parameterised queries |
+```
+enterprise-data-analysis-erp-simulation/
+│
+├── gtm_bi_dashboard.ipynb        ← NEW: GTM KPIs + LLM insights + NL→SQL engine
+├── streamlit_app.py              ← NEW: Interactive Streamlit BI dashboard
+├── requirements.txt              ← NEW: All dependencies
+│
+├── ecommerce_sql_python.ipynb    ← Original: 12 SQL queries across ERP modules
+├── csv_to_mysql.ipynb            ← Original: Automated CSV → MySQL ingestion pipeline
+├── ecommerce_ppt.pptx            ← Original: Business presentation
+└── README.md                     ← This file
+```
 
 ---
 
 ## ▶️ How to Run
 
-### Step 1 — Clone the repository
+### Step 1 — Clone & Install
 ```bash
-git clone https://github.com/arpitasarkardata/sql-python-ecommerce-analysis.git
+git clone https://github.com/arpitasarkardata/enterprise-data-analysis-erp-simulation.git
+cd enterprise-data-analysis-erp-simulation
+pip install -r requirements.txt
 ```
 
-### Step 2 — Install dependencies
+### Step 2 — Set up MySQL (if not already done)
 ```bash
-pip install pandas mysql-connector-python matplotlib seaborn
+# Create database
+mysql -u root -p -e "CREATE DATABASE ecommerce;"
+
+# Run the ingestion notebook first
+jupyter notebook csv_to_mysql.ipynb
+# Update credentials in Cell 1, then Kernel → Restart & Run All
 ```
 
-### Step 3 — Set up MySQL
-```sql
-CREATE DATABASE ecommerce;
+### Step 3 — Set your Claude API key
+```bash
+# Get free key at: https://console.anthropic.com
+export ANTHROPIC_API_KEY="your_key_here"
 ```
 
-### Step 4 — Run Stage 1: Data Ingestion
-Open `csv_to_mysql.ipynb` and update credentials in Cell 1:
-```python
-host = "localhost"
-user = "your_username"
-password = "your_password"
-database = "ecommerce"
-folder_path = "path_to_your_csv_folder"
+### Step 4 — Run the GTM BI Notebook
+```bash
+jupyter notebook gtm_bi_dashboard.ipynb
+# Update DB credentials in Cell 2, then Kernel → Restart & Run All
 ```
-Run all cells — this creates all 7 tables and loads all CSV data automatically.
 
-### Step 5 — Run Stage 2: Analysis
-Open `ecommerce_sql_python.ipynb` and update credentials in Cell 1:
-```python
-host = "localhost"
-user = "root"
-password = "your_password"
-database = "ecommerce"
-```
-Run **Kernel → Restart & Run All**
-
----
-
-## 📁 Repository Structure
-
-```
-sql-python-ecommerce-analysis/
-    csv_to_mysql.ipynb              ← Stage 1: Automated CSV ingestion pipeline
-    ecommerce_sql_python.ipynb      ← Stage 2: ERP module analysis & visualisations
-    questions.docx                  ← All 12 SQL business queries with module reference
-    charts.docx                     ← All 5 business report visualisations with code
-    README.md                       ← This file
+### Step 5 — Launch Streamlit Dashboard
+```bash
+streamlit run streamlit_app.py
+# Opens at http://localhost:8501
 ```
 
 ---
 
-## 📂 Dataset Source
+## 🗂 Dataset
 
-Brazilian Ecommerce Public Dataset — available on [Kaggle](https://www.kaggle.com/datasets/olistbr/brazilian-ecommerce)
+**Brazilian Ecommerce Public Dataset** — 7 interconnected tables, 100,000+ records
+
+| Table | Rows | GTM Equivalent |
+|---|---|---|
+| orders | ~100K | Sales pipeline / deal records |
+| customers | ~100K | CRM contact records |
+| order_items | ~115K | Line items / revenue breakdown |
+| products | ~33K | Product catalogue |
+| sellers | ~3K | Sales rep / partner records |
+| payments | ~104K | Payment / billing data |
+| geolocation | ~1M | Territory / regional master data |
+
+Source: [Kaggle — Olist Brazilian E-Commerce](https://www.kaggle.com/datasets/olistbr/brazilian-ecommerce)
+
+---
+
+## 📊 Original ERP Analysis (Stage 1 & 2)
+
+The original notebooks perform a 12-query ERP module analysis mapping the dataset to SAP SD / CRM / MM / FI module equivalents. See `ecommerce_sql_python.ipynb` for:
+- Revenue reporting with window functions (DENSE_RANK, SUM OVER)
+- Customer retention rate (double CTE + DATE_ADD)
+- Year-over-year growth (CTE + LAG)
+- Cumulative sales tracking
+- Order volume heatmaps
 
 ---
 
 *Built by Arpita Sarkar — B.Tech ECE, Kalyani Government Engineering College (MAKAUT), 2025*  
-*GitHub: [arpitasarkardata](https://github.com/arpitasarkardata) | Contact: arpitasarkarkgec@gmail.com*
+*GitHub: [arpitasarkardata](https://github.com/arpitasarkardata) | Contact: arpitasarkarkgec@gmail.com*  
+*LinkedIn: [linkedin.com/in/arpita-sarkar-00921a225](https://www.linkedin.com/in/arpita-sarkar-00921a225/)*
